@@ -1,4 +1,3 @@
 # Entregable13
-Ruta: http://localhost:8080/api/productos/
+Ruta: http://localhost:8080/api/loginFacebook/
 
-El nombre es 'vivi', de lo contrario no esta permitido# Entregable27
