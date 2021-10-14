@@ -5,5 +5,5 @@ Entregable 28 Rutas:
 
 /info : http://localhost:8080/api/info
 
-/randoms : https://github.com/vivianafb/Entregable27
+/randoms : http://localhost:8080/api/randoms?cant=30
 
