@@ -4,5 +4,6 @@ Ruta: http://localhost:8080/api/loginFacebook/
 Entregable 28 Rutas:
 
 /info : http://localhost:8080/api/info
-/randoms :
+
+/randoms : https://github.com/vivianafb/Entregable27
 
