@@ -15,7 +15,7 @@ router.get('/info', (req, res) => {
   res.json({
     'Argumentos de entrada': Argumentos,
     'Nombre de la plataforma': process.platform,
-    'Versión de node': process.version,
+    'Versión de node.js': process.version,
     'Uso de memoria': process.memoryUsage(),
     'Path de ejecución': process.cwd(),
     'Process id': process.pid,
