@@ -6,6 +6,7 @@
   "scripts": {
     "transpile": "babel src --out-dir dist",
     "start": "node ./dist/index.js",
+    "start:args": "node ./dist/index.js --port=8080 --clientId=id --clientSecret=secret",
     "dev": "nodemon --exec babel-node ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -35,6 +36,7 @@
     "bcrypt": "^5.0.1",
     "passport": "^0.5.0",
     "passport-local": "^1.0.0",
-    "passport-facebook": "^3.0.0"
+    "passport-facebook": "^3.0.0",
+    "minimist": "^1.2.5"
   }
 }

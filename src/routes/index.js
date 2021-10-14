@@ -3,9 +3,37 @@ import productoRouter from './productos';
 import userRouter from './user';
 import passport from '../middlewares/auth';
 import { isLoggedIn } from '../middlewares/auth';
+import { Argumentos } from "../middlewares/auth";
+import { fork } from 'child_process';
+import path from 'path';
+import randoms from '../utils/calculo.js'
 const router = Router();
 
 router.use('/productos',productoRouter);
+
+router.get('/info', (req, res) => {
+  res.json({
+    'Argumentos de entrada': Argumentos,
+    'Nombre de la plataforma': process.platform,
+    'Versión de node': process.version,
+    'Uso de memoria': process.memoryUsage(),
+    'Path de ejecución': process.cwd(),
+    'Process id': process.pid,
+    'Carpeta corriente': process.execPath
+  });
+});
+const scriptPath = path.resolve(__dirname, '../utils/calculo.js');
+
+router.get('/randoms', (req, res) => {
+  let num;
+  req.query.cant ? (num = Number(req.query.cant)) : 100000000;
+  const computo = fork(scriptPath);
+  const msg = { msg: 'start', cantidad: num };
+  computo.send(JSON.stringify(msg));
+  computo.on('message', (result) => {
+    res.json(result);
+  });
+});
 
 router.get('/registro', (req, res) => {
   res.render('registro')

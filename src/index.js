@@ -10,8 +10,9 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import { StoreOptions } from './services/server.js';
 import passport from './middlewares/auth';
+import { portArg } from './middlewares/args'
 
-const puerto = Config.PORT;
+const puerto = portArg || Config.PORT;
 const app = express();
 connectToDB();
 
@@ -53,6 +54,13 @@ myWSServer.on('connection',  (socket) =>{
     myWSServer.emit('messages', messages);
   });
 });
+
+const argumentos = process.argv;
+
+console.log('ARGUMENTOS RECIBIDOS');
+
+console.log(argumentos);
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
