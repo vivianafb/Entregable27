@@ -26,16 +26,41 @@ var _auth = _interopRequireDefault(require("./middlewares/auth"));
 
 var _args = require("./middlewares/args");
 
+var _os = _interopRequireDefault(require("os"));
+
+var _cluster = _interopRequireDefault(require("cluster"));
+
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const puerto = _args.portArg;
+const puerto = _args.portArg || _config.default.PORT;
 const app = (0, _express.default)();
 (0, _db.connectToDB)();
 const server = http.Server(app);
+
+const numCPUs = _os.default.cpus().length;
+
+if (_cluster.default.isMaster) {
+  console.log(`NUMERO DE CPUS ===> ${numCPUs}`);
+  console.log(`PID MASTER ${process.pid}`);
+
+  for (let i = 0; i < numCPUs; i++) {
+    _cluster.default.fork();
+  }
+
+  _cluster.default.on('exit', worker => {
+    console.log(`Worker ${worker.process.pid} died at ${Date()}`);
+
+    _cluster.default.fork();
+  });
+} else {
+  const PORT = 8080;
+  server.listen(PORT, () => console.log(`Servidor express escuchando en el puerto ${PORT} - PID WORKER ${process.pid}`));
+}
+
 const myWSServer = (0, _socket.initWsServer)(server);
 server.listen(puerto, () => console.log('Server up en puerto', puerto));
 

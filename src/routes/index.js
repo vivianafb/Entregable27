@@ -6,10 +6,19 @@ import { isLoggedIn } from '../middlewares/auth';
 import { Argumentos } from "../middlewares/auth";
 import { fork } from 'child_process';
 import path from 'path';
-import randoms from '../utils/calculo.js'
+import randoms from '../utils/calculo.js';
+import os from 'os';
+
 const router = Router();
 
 router.use('/productos',productoRouter);
+
+router.get('/servers', (req, res) => {
+  res.json({
+    pid: process.pid,
+    msg: 'Hola hola :)',
+  });
+});
 
 router.get('/info', (req, res) => {
   res.json({
@@ -19,7 +28,8 @@ router.get('/info', (req, res) => {
     'Uso de memoria': process.memoryUsage(),
     'Path de ejecución': process.cwd(),
     'Process id': process.pid,
-    'Carpeta corriente': process.execPath
+    'Carpeta corriente': process.execPath,
+    'Numero de procesadores': os.cpus().length,
   });
 });
 const scriptPath = path.resolve(__dirname, '../utils/calculo.js');

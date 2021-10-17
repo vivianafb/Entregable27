@@ -15,6 +15,12 @@ var _auth = _interopRequireWildcard(require("../middlewares/auth"));
 
 var _child_process = require("child_process");
 
+var _path = _interopRequireDefault(require("path"));
+
+var _calculo = _interopRequireDefault(require("../utils/calculo.js"));
+
+var _os = _interopRequireDefault(require("os"));
+
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
@@ -23,19 +29,39 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const router = (0, _express.Router)();
 router.use('/productos', _productos.default);
+router.get('/servers', (req, res) => {
+  res.json({
+    pid: process.pid,
+    msg: 'Hola hola :)'
+  });
+});
 router.get('/info', (req, res) => {
   res.json({
     'Argumentos de entrada': _auth.Argumentos,
     'Nombre de la plataforma': process.platform,
-    'Versión de node': process.version,
+    'Versión de node.js': process.version,
     'Uso de memoria': process.memoryUsage(),
     'Path de ejecución': process.cwd(),
     'Process id': process.pid,
-    'Carpeta corriente': process.execPath
+    'Carpeta corriente': process.execPath,
+    'Numero de procesadores': _os.default.cpus().length
   });
 });
+
+const scriptPath = _path.default.resolve(__dirname, '../utils/calculo.js');
+
 router.get('/randoms', (req, res) => {
-  res.json('h');
+  let num;
+  req.query.cant ? num = Number(req.query.cant) : 100000000;
+  const computo = (0, _child_process.fork)(scriptPath);
+  const msg = {
+    msg: 'start',
+    cantidad: num
+  };
+  computo.send(JSON.stringify(msg));
+  computo.on('message', result => {
+    res.json(result);
+  });
 });
 router.get('/registro', (req, res) => {
   res.render('registro');
