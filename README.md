@@ -7,3 +7,8 @@ Entregable 28 Rutas:
 
 /randoms : http://localhost:8080/api/randoms?cant=30
 
+Ruta Entregable 29: 
+
+/info : http://localhost:8080/api/info
+/servers : http://localhost:8080/api/servers/
+
