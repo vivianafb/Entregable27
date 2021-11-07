@@ -6,7 +6,7 @@
   "scripts": {
     "transpile": "babel src --out-dir dist",
     "start": "node ./dist/index.js",
-    "start:args": "node ./dist/index.js --port=8080 --clientId=id --clientSecret=secret",
+    "start:args": "node ./dist/index.js --port=8080 --clientId=190737516525021 --clientSecret=d180349b7875288ccae2009d3d98dfb2",
     "prod": "node_modules/.bin/forever -w start dist/index.js",
     "pm2:fork": "node_modules/.bin/pm2 start ecosystem.config.js --only fork",
     "pm2:cluster": "node_modules/.bin/pm2 start ecosystem.config.js --only cluster",

@@ -32,19 +32,17 @@ if (cluster.isMaster) {
     cluster.fork();
   });
 } else {
-  const PORT = 8080;
+  // const PORT = 8080;
 
-  server.listen(PORT, () =>
+  server.listen(puerto, () =>
     console.log(
-      `Servidor express escuchando en el puerto ${PORT} - PID WORKER ${process.pid}`
+      `Servidor express escuchando en el puerto ${puerto} - PID WORKER ${process.pid}`
     )
   );
+  server.on('error', error => console.log(`Error en el servidor: ${error}`));
+
 }
 
-
-
-const myWSServer = initWsServer(server);
-server.listen(puerto, () => console.log('Server up en puerto', puerto));
 
 const publicPath = path.resolve(__dirname, '../public');
 app.use(express.static(publicPath));
@@ -60,32 +58,9 @@ app.engine(
   })
 );
 
-const messages = [];
 
-myWSServer.on('connection',  (socket) =>{
-  // console.log('\nUn cliente se ha conectado');
-    // console.log(`ID DEL SOCKET DEL CLIENTE => ${socket.client.id}`);
-    // console.log(`ID DEL SOCKET DEL SERVER => ${socket.id}`);
 
-  socket.on('new-message',  (data)=> {
-    const newMessage = {
-      message: data,
-    };
-    messages.push(newMessage);
-    myWSServer.emit('messages', messages);
-  });
 
-  socket.on('askData', (data) => {
-    console.log('ME LLEGO DATA');
-    myWSServer.emit('messages', messages);
-  });
-});
-
-const argumentos = process.argv;
-
-console.log('ARGUMENTOS RECIBIDOS');
-
-console.log(argumentos);
 
 
 app.use(express.json());
