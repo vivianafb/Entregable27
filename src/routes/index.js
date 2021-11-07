@@ -84,9 +84,6 @@ router.get('/datos', (req, res) => {
 
     const userData = req.user;
 
-    
-
-
     if (!userData.contador) userData.contador = 0;
     userData.contador++;
 
@@ -95,9 +92,9 @@ router.get('/datos', (req, res) => {
     if (userData.emails) email = userData.emails[0].value;
 
     const content = `<h1> ${userData.displayName}</h1><p>Fecha y Hora del LogIn: ${new Date()}</p>`;
-    const content2= ` Foto de perfil: ${userData.photos[0].value}`;
+    const content2= `${userData.photos[0].value}`;
     etherealService.sendEmail(Config.ETHEREAL_EMAIL, 'LogIn', content);
-    gmailService.sendEmail(email, 'LogIn', content2);
+    gmailService.sendEmail(email, 'LogIn', 'Foto de perfil',content2);
 
     res.render('datos', {
       nombre: userData.displayName,

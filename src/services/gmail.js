@@ -25,18 +25,18 @@ export class Gmail {
     this.transporter.verify();
   }
 
-  async sendEmail(dest, subject, content) {
+  async sendEmail(dest, subject, content,attachment) {
     const mailOptions = {
       from: this.owner,
       to: dest,
       subject,
       html: content,
-    //   attachments: [
-    //     {
-    //       // filename and content type is derived from path
-    //       path: path.resolve(__dirname, '../nodemailer.png'),
-    //     },
-    //   ],
+      attachments: [
+        {
+            filename: 'profile.jpg',
+            path: attachment,
+        },
+      ],
     };
 
     const response = await this.transporter.sendMail(mailOptions);
