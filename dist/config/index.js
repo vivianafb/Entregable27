@@ -21,7 +21,10 @@ const venvs = {
   FACEBOOK_APP_SECRET: process.env.FACEBOOK_APP_SECRET || 'faceSecret',
   ETHEREAL_EMAIL: process.env.ETHEREAL_EMAIL || 'email@ethereal.email',
   ETHEREAL_PASSWORD: process.env.ETHEREAL_PASSWORD || 'password',
-  ETHEREAL_NAME: process.env.ETHEREAL_NAME || 'ethereal owner name'
+  ETHEREAL_NAME: process.env.ETHEREAL_NAME || 'ethereal owner name',
+  GMAIL_EMAIL: process.env.GMAIL_EMAIL || 'email@gmail.com',
+  GMAIL_PASSWORD: process.env.GMAIL_PASSWORD || 'password',
+  GMAIL_NAME: process.env.GMAIL_NAME || 'GMAIL owner name'
 };
 var _default = venvs;
 exports.default = _default;

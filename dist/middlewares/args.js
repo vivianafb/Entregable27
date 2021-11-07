@@ -13,11 +13,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 _dotenv.default.config();
 
-const args = (0, _minimist.default)(process.argv.slice(2)); // if (args)
-//   console.log(
-//     'Argumentos validos: port=NUMBER  clientId=FACEBOOK_CLIENT_ID  clientSecret=FACEBOOK_CLIENT_SECRET'
-//   );
-
+const args = (0, _minimist.default)(process.argv.slice(2));
 const Argumentos = args;
 exports.Argumentos = Argumentos;
 const portArg = args.puerto || 8080;

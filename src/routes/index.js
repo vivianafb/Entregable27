@@ -4,26 +4,26 @@ import userRouter from './user';
 import passport from '../middlewares/auth';
 import { isLoggedIn } from '../middlewares/auth';
 import { Email } from '../services/email';
+import { Gmail } from "../services/gmail";
+import { SmsService } from "../services/twilio";
 import Config from '../config';
 const router = Router();
 
 router.use('/productos',productoRouter);
 
-router.post('/send-email', async (req, res) => {
+router.post('/send-message', async (req, res) => {
   const { body } = req;
 
-  const destination = Config.ETHEREAL_EMAIL;
-  const subject = 'LogIn';
-  const content = `
-  <h1>LogIn</h1>
-  <p>Acabas de loguearte con facebook!</p>
-  `;
+  if (!body || !body.destination || !body.content)
+    return res.status(400).json({
+      msg: "mandame en el body el 'destination' y el 'content'",
+      body,
+    });
 
   try {
-    const response = await EmailService.sendEmail(
-      destination,
-      subject,
-      content
+    const response = await SmsService.sendMessage(
+      body.destination,
+      body.content
     );
 
     res.json(response);
@@ -80,10 +80,12 @@ router.get('/datos', (req, res) => {
 
   if (req.isAuthenticated()) {
     const etherealService = new Email('ethereal');
+    const gmailService = new Gmail('gmail');
+
     const userData = req.user;
 
-    const content = `<h1> ${userData.displayName}</h1><p>Fecha y Hora del LogIn: ${new Date()}</p>`;
-    etherealService.sendEmail(Config.ETHEREAL_EMAIL, 'LogIn', content);
+    
+
 
     if (!userData.contador) userData.contador = 0;
     userData.contador++;
@@ -91,6 +93,11 @@ router.get('/datos', (req, res) => {
     if (userData.photos) foto = userData.photos[0].value;
 
     if (userData.emails) email = userData.emails[0].value;
+
+    const content = `<h1> ${userData.displayName}</h1><p>Fecha y Hora del LogIn: ${new Date()}</p>`;
+    const content2= ` Foto de perfil: ${userData.photos[0].value}`;
+    etherealService.sendEmail(Config.ETHEREAL_EMAIL, 'LogIn', content);
+    gmailService.sendEmail(email, 'LogIn', content2);
 
     res.render('datos', {
       nombre: userData.displayName,
