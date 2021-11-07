@@ -18,7 +18,10 @@ const venvs = {
   PORT: _args.default || process.env.PORT || 8080,
   MONGO_LOCAL_DBNAME: process.env.MONGO_LOCAL_DBNAME || 'LOCALDB',
   FACEBOOK_APP_ID: process.env.FACEBOOK_APP_ID || 'faceId',
-  FACEBOOK_APP_SECRET: process.env.FACEBOOK_APP_SECRET || 'faceSecret'
+  FACEBOOK_APP_SECRET: process.env.FACEBOOK_APP_SECRET || 'faceSecret',
+  ETHEREAL_EMAIL: process.env.ETHEREAL_EMAIL || 'email@ethereal.email',
+  ETHEREAL_PASSWORD: process.env.ETHEREAL_PASSWORD || 'password',
+  ETHEREAL_NAME: process.env.ETHEREAL_NAME || 'ethereal owner name'
 };
 var _default = venvs;
 exports.default = _default;

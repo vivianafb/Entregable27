@@ -3,67 +3,46 @@ import productoRouter from './productos';
 import userRouter from './user';
 import passport from '../middlewares/auth';
 import { isLoggedIn } from '../middlewares/auth';
-import { Argumentos } from "../middlewares/auth";
-import { fork } from 'child_process';
-import path from 'path';
-import randoms from '../utils/calculo.js';
-import os from 'os';
-import { portArg } from "../middlewares/args";
+import { Email } from '../services/email';
+import Config from '../config';
 const router = Router();
 
 router.use('/productos',productoRouter);
 
-router.get('/', (req, res) => {
-  res.json({
-    pid: process.pid,
-    msg: `HOLA desde puerto ${portArg}`,
-    });
-});
+router.post('/send-email', async (req, res) => {
+  const { body } = req;
 
-router.get('/info', (req, res) => {
-  res.json({
-    'Argumentos de entrada': Argumentos,
-    'Nombre de la plataforma': process.platform,
-    'Versión de node.js': process.version,
-    'Uso de memoria': process.memoryUsage(),
-    'Path de ejecución': process.cwd(),
-    'Process id': process.pid,
-    'Carpeta corriente': process.execPath,
-    'Numero de procesadores': os.cpus().length
-  });
-});
-const scriptPath = path.resolve(__dirname, '../utils/calculo.js');
+  const destination = Config.ETHEREAL_EMAIL;
+  const subject = 'LogIn';
+  const content = `
+  <h1>LogIn</h1>
+  <p>Acabas de loguearte con facebook!</p>
+  `;
 
-router.get('/randoms', (req, res) => {
-  let num;
-  req.query.cant ? (num = Number(req.query.cant)) : 100000000;
-  const computo = fork(scriptPath);
-  const msg = { msg: 'start', cantidad: num };
-  computo.send(JSON.stringify(msg));
-  computo.on('message', (result) => {
-    res.json(result);
-  });
-});
+  try {
+    const response = await EmailService.sendEmail(
+      destination,
+      subject,
+      content
+    );
 
-router.get('/registro', (req, res) => {
-  res.render('registro')
-});
-
-router.get('/iniciosesion', (req, res) => {
-  res.render('inicio')
+    res.json(response);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 router.get('/loginFacebook', (req, res) => {
   res.render('loginFacebook');
 });
 
-router.get(
-  '/auth/facebook',
-  passport.authenticate('facebook', { scope: ['email'] })
+router.get('/auth/facebook',
+  passport.authenticate('facebook', {
+     scope: ['email'] ,
+    })
 );
 
-router.get(
-  '/auth/facebook/callback',
+router.get('/auth/facebook/callback',
   passport.authenticate('facebook', {
     successRedirect: '/api/datos',
     failureRedirect: '/api/fail',
@@ -74,9 +53,25 @@ router.get('/fail', (req, res) => {
   res.render('login-error', {});
 });
 
+// router.get('/logout', (req, res) => {
+//   req.logout();
+//   res.redirect('/api/loginFacebook');
+// });
+
 router.get('/logout', (req, res) => {
-  req.logout();
-  res.redirect('/api/loginFacebook');
+  if (req.isAuthenticated()) {
+    const etherealService = new Email('ethereal');
+    const userData = req.user;
+
+    const content = `<h1> ${userData.displayName}</h1><p>Fecha y hora del logOut:${new Date()}<p>`;
+    etherealService.sendEmail(Config.ETHEREAL_EMAIL, 'LogOut', content);
+  }
+  req.session.destroy(err => {
+    if (err) res.status(500).json({ message: 'Ocurrió un error' });
+    else {
+      res.json({ message: 'Logout exitoso' });
+    }
+  });
 });
 
 router.get('/datos', (req, res) => {
@@ -84,8 +79,12 @@ router.get('/datos', (req, res) => {
   let email = 'noEmail';
 
   if (req.isAuthenticated()) {
+    const etherealService = new Email('ethereal');
     const userData = req.user;
-    //reinicio contador
+
+    const content = `<h1> ${userData.displayName}</h1><p>Fecha y Hora del LogIn: ${new Date()}</p>`;
+    etherealService.sendEmail(Config.ETHEREAL_EMAIL, 'LogIn', content);
+
     if (!userData.contador) userData.contador = 0;
     userData.contador++;
 

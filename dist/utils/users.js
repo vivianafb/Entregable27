@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.getCurrentUser = exports.removeUser = exports.addUser = void 0;
-let users = []; //Join User to CHat
+let users = [];
 
 const addUser = (id, username, room) => {
   const user = {
@@ -25,9 +25,6 @@ exports.removeUser = removeUser;
 
 const getCurrentUser = id => {
   return users.find(aUser => aUser.id === id);
-}; // export const getRoomUsers = (room) => {
-//   return users.filter((aUser) => aUser.room === room);
-// };
-
+};
 
 exports.getCurrentUser = getCurrentUser;

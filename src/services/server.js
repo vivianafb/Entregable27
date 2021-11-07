@@ -11,7 +11,4 @@ export const StoreOptions = {
   secret: 'cat',
   resave: false,
   saveUninitialized: true,
-  cookie: {
-    maxAge: 600*1000
-  },
 };

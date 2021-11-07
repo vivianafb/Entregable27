@@ -59,42 +59,42 @@ if (_cluster.default.isMaster) {
 } else {
   // const PORT = Config.PORT;
   server.listen(_args.portArg, () => console.log(`Servidor express escuchando en el puerto ${_args.portArg} - PID WORKER ${process.pid}`));
-} // const myWSServer = initWsServer(server);
-// server.listen(portArg, () => console.log('Server up en puerto', portArg));
-// // const publicPath = path.resolve(__dirname, '../public');
-// // app.use(express.static(publicPath));
-// const layoutFolderPath = path.resolve(__dirname, '../views/layouts');
-// const defaultLayerPth = path.resolve(__dirname, '../views/layouts/index.hbs');
-// app.set('view engine', 'hbs');
-// app.engine(
-//   'hbs',
-//   handlebars({
-//     layoutsDir: layoutFolderPath,
-//     defaultLayout: defaultLayerPth,
-//     extname: 'hbs',
-//   })
-// );
-// const messages = [];
-// myWSServer.on('connection',  (socket) =>{
-//   // console.log('\nUn cliente se ha conectado');
-//     // console.log(`ID DEL SOCKET DEL CLIENTE => ${socket.client.id}`);
-//     // console.log(`ID DEL SOCKET DEL SERVER => ${socket.id}`);
-//   socket.on('new-message',  (data)=> {
-//     const newMessage = {
-//       message: data,
-//     };
-//     messages.push(newMessage);
-//     myWSServer.emit('messages', messages);
-//   });
-//   socket.on('askData', (data) => {
-//     console.log('ME LLEGO DATA');
-//     myWSServer.emit('messages', messages);
-//   });
-// });
-// const argumentos = process.argv;
+  server.on('error', error => console.log(`Error en el servidor: ${error}`));
+}
+
+const myWSServer = (0, _socket.initWsServer)(server);
+server.listen(_args.portArg, () => console.log('Server up en puerto', _args.portArg)); // const publicPath = path.resolve(__dirname, '../public');
+// app.use(express.static(publicPath));
+
+const layoutFolderPath = _path.default.resolve(__dirname, '../views/layouts');
+
+const defaultLayerPth = _path.default.resolve(__dirname, '../views/layouts/index.hbs');
+
+app.set('view engine', 'hbs');
+app.engine('hbs', (0, _expressHandlebars.default)({
+  layoutsDir: layoutFolderPath,
+  defaultLayout: defaultLayerPth,
+  extname: 'hbs'
+}));
+const messages = [];
+myWSServer.on('connection', socket => {
+  // console.log('\nUn cliente se ha conectado');
+  // console.log(`ID DEL SOCKET DEL CLIENTE => ${socket.client.id}`);
+  // console.log(`ID DEL SOCKET DEL SERVER => ${socket.id}`);
+  socket.on('new-message', data => {
+    const newMessage = {
+      message: data
+    };
+    messages.push(newMessage);
+    myWSServer.emit('messages', messages);
+  });
+  socket.on('askData', data => {
+    console.log('ME LLEGO DATA');
+    myWSServer.emit('messages', messages);
+  });
+}); // const argumentos = process.argv;
 // console.log('ARGUMENTOS RECIBIDOS');
 // console.log(argumentos);
-
 
 app.use(_express.default.json());
 app.use(_express.default.urlencoded({
