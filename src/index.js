@@ -13,6 +13,8 @@ import { portArg } from './middlewares/args'
 import os from 'os';
 import cluster from 'cluster';
 
+import { initWsServer } from './services/socket';
+
  const puerto = portArg|| Config.PORT;
 const app = express();
 connectToDB();
@@ -40,7 +42,8 @@ if (cluster.isMaster) {
   server.on('error', error => console.log(`Error en el servidor: ${error}`));
 
 }
-
+const publicPath = path.resolve(__dirname, '../public');
+app.use(express.static(publicPath));
 const layoutFolderPath = path.resolve(__dirname, '../views/layouts');
 const defaultLayerPth = path.resolve(__dirname, '../views/layouts/index.hbs');
 app.set('view engine', 'hbs');
@@ -52,7 +55,23 @@ app.engine(
     extname: 'hbs',
   })
 );
+const myWSServer = initWsServer(server);
+const messages = [];
+myWSServer.on('connection',  (socket) =>{
 
+  socket.on('new-message',  (data)=> {
+    const newMessage = {
+      message: data,
+    };
+    messages.push(newMessage);
+    myWSServer.emit('messages', messages);
+  });
+
+  socket.on('askData', (data) => {
+    console.log('ME LLEGO DATA');
+    myWSServer.emit('messages', messages);
+  });
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
