@@ -7,7 +7,11 @@ exports.clientSecretArgt = exports.clientIdArg = exports.portArg = exports.Argum
 
 var _minimist = _interopRequireDefault(require("minimist"));
 
+var _dotenv = _interopRequireDefault(require("dotenv"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_dotenv.default.config();
 
 const args = (0, _minimist.default)(process.argv.slice(2)); // if (args)
 //   console.log(
@@ -16,7 +20,7 @@ const args = (0, _minimist.default)(process.argv.slice(2)); // if (args)
 
 const Argumentos = args;
 exports.Argumentos = Argumentos;
-const portArg = args.port;
+const portArg = args.puerto || 8080;
 exports.portArg = portArg;
 const clientIdArg = args.clientId;
 exports.clientIdArg = clientIdArg;

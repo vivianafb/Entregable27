@@ -8,16 +8,16 @@ import { fork } from 'child_process';
 import path from 'path';
 import randoms from '../utils/calculo.js';
 import os from 'os';
-
+import { portArg } from "../middlewares/args";
 const router = Router();
 
 router.use('/productos',productoRouter);
 
-router.get('/servers', (req, res) => {
+router.get('/', (req, res) => {
   res.json({
     pid: process.pid,
-    msg: 'Hola hola :)',
-  });
+    msg: `HOLA desde puerto ${portArg}`,
+    });
 });
 
 router.get('/info', (req, res) => {
@@ -29,7 +29,7 @@ router.get('/info', (req, res) => {
     'Path de ejecución': process.cwd(),
     'Process id': process.pid,
     'Carpeta corriente': process.execPath,
-    'Numero de procesadores': os.cpus().length,
+    'Numero de procesadores': os.cpus().length
   });
 });
 const scriptPath = path.resolve(__dirname, '../utils/calculo.js');
